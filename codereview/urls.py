@@ -33,6 +33,7 @@ urlpatterns = patterns("",
     (r"^notices/", include("notification.urls")),
     (r"^announcements/", include("announcements.urls")),
     (r'^mypaste/', include('dpaste.urls')),
+    (r'^annotations/', include('annotation.urls')),                       
     (r"^admin/", include(admin.site.urls)),
 )
 

@@ -14,16 +14,31 @@ register = template.Library()
 
 class AnnotationParser(template.Node):
     def __init__(self, obj, to_variable):
-        self.obj = obj
+        self.obj = template.Variable(obj)
         self.to_var = to_variable
         
     def render(self, context):
-        annotation_list = Annotation.objects.filter(content_type=ContentType.objects.get_for_object(self.obj),
-                                                    object_id=self.obj.id)
-        return annotation_list
+        obj = self.obj.resolve(context)
+        annotation_list = Annotation.objects.filter(content_type=ContentType.objects.get_for_model(obj),
+                                                    object_id=obj.id)
+        context[self.to_var] = annotation_list
+        return ''
 
 @register.tag(name='get_annotations')    
 def do_get_annotations(parser, token):
+    """
+    Given an object which has annotations and a variable, this tag
+    will add create the variable in the template's context with a list
+    of annotations.
+
+    Syntax
+    
+    ::
+    
+      {% load annotation_tags %}
+      {% get_annotations <object> as <variable %}
+      
+    """
     try:
         tag_name, object, _, to_variable = token.split_contents()
     except ValueError:
@@ -31,16 +46,15 @@ def do_get_annotations(parser, token):
     return AnnotationParser(object, to_variable)
 
 
-
 class AnnotationJSONParser(template.Node):
     def __init__(self, obj):
-        self.obj = obj
+        self.obj = template.Variable(obj)
 
     def render(self, context):
-        annotation_list = Annotation.objects.filter(content_type=ContentType.objects.get_for_object(self.obj),
-                                                    object_id=self.obj.id)
+        obj = self.obj.resolve(context)
+        annotation_list = Annotation.objects.filter(content_type=ContentType.objects.get_for_model(obj),
+                                                    object_id=obj.id)
         annotation_list = annotation_list.values('id',
-                                                 'date_added',
                                                  'commentor_id',
                                                  'comment',
                                                  'position')
@@ -49,6 +63,18 @@ class AnnotationJSONParser(template.Node):
 
 @register.tag(name='get_annotations_json')
 def do_get_annotations_json(parser, token):
+    """
+    Given an object which has annotations, this tag will add return a
+    json representation of the annotations.
+
+    Syntax
+    
+    ::
+    
+      {% load annotation_tags %}
+      {% get_annotations_json <object> %}
+
+    """
     try:
         tag_name, obj  = token.split_contents()
     except ValueError:

@@ -22,9 +22,4 @@
 {% block extra_body %}
     {% block script_footer %}{% endblock %}
 <script type="text/javascript" src="{{ STATIC_URL }}facebox/facebox.js"></script>
-<script type="text/javascript">
-jQuery(document).ready(function($) {
-  $('a[rel*=facebox]').facebox()
-});
-</script>
 {% endblock %}

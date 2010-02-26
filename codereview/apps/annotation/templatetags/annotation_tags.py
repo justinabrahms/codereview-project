@@ -52,8 +52,8 @@ class AnnotationJSONParser(template.Node):
 
     def render(self, context):
         obj = self.obj.resolve(context)
-        annotation_list = Annotation.objects.filter(content_type=ContentType.objects.get_for_model(obj),
-                                                    object_id=obj.id)
+        annotation_list = Annotation.objects.filter(content_type=ContentType.objects.get_for_model(obj.entity),
+                                                    object_id=obj.entity.id)
         annotation_list = annotation_list.values('id',
                                                  'commentor_id',
                                                  'comment',

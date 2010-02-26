@@ -22,9 +22,15 @@ def annotate_form(request, content_type_str, obj_id, position=None):
         else:
             return render_to_response('annotations/inline_form.html',
                                       {'form':f,
+                                       'content_type': ct.name,
+                                       'obj_id': obj.id,
+                                       'position': position,
                                        'annotation_object': obj})
     else:
         # invalid / new
         return render_to_response('annotations/inline_form.html',
                                   {'form':f,
+                                   'content_type': ct.name,
+                                   'obj_id': obj.id,
+                                   'position': position,
                                    'annotation_object': obj})

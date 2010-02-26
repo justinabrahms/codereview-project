@@ -1,3 +1,11 @@
+{% if annotation_list %}
+  <h4>Other Comments</h4>
+  <ul>
+    {% for annotation in annotation_list %}
+      <li>{{ annotation.comment }} by {{ annotation.commentor }}</li>
+    {% endfor %}
+  </ul>
+{% endif %}
 <form method="POST" action="{% url annotate-form content_type,obj_id,position %}">{% csrf_token %}
   {{ form.as_p }}
   <input type="submit" />
